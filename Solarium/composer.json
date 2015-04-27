@@ -1,0 +1,13 @@
+{
+    "name": "science_festivals",
+    "description": "Science festivals projects in WordPress",
+    "keywords": [
+        "wordpress",
+        "science festivals"
+    ],
+    "require": {
+        "php": ">=5.3",
+        "solarium/solarium": "dev-master",
+        "phpunit/phpunit": "4.3.*"
+    }
+}

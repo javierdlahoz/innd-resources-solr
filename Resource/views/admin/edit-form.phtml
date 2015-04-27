@@ -1,0 +1,264 @@
+<?php
+
+use INUtils\Helper\PostHelper;
+use Resource\Service\ResourceService;
+use Resource\Helper\ResourceHelper;
+
+$resource = ResourceService::getSingleton()->findResourceById(get_the_ID());
+if(isset($resource) && $resource->getDate() != null){
+    $dateEntity = $resource->getDate();
+    $date = $dateEntity->getWPDate();
+}
+else{
+    $date = "";
+}
+?>
+    <div id="contributors">
+    <?php
+    if (isset($resource) && $resource != null) :
+        $iterator = 0;
+        foreach ($resource->getContributors() as $contributor): ?>
+        <div class="panel panel-default">
+        <?php if($iterator != 0): ?>
+           <div class="panel-heading clearfix">
+               <div class="btn btn-danger btn-xs pull-left"
+                    onclick="jQuery(this).parent().parent().remove();">
+                   <i class="glyphicon glyphicon-remove"></i> Remove
+               </div>
+           </div>
+        <?php else: ?>
+            <div class="panel-heading clearfix">
+                Contributor
+           </div>
+        <?php endif; ?>
+            <div class="panel-body contributor-section">
+                <div class="form-group">
+                    <label for="authors" class="control-label col-lg-2 col-sm-2">Author</label>
+                    <div class="col-lg-10 col-sm-10">
+                        <input type="text" name="authors[]" id="authors"
+                               placeholder="Type Author" class="form-control"
+                               value="<?php echo $contributor['author']; ?>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="institution_name" class="control-label col-lg-2 col-sm-2">Organization</label>
+                    <div class="col-lg-10 col-sm-10">
+                        <input type="text" name="institution_name[]" id="institution_name[]"
+                               placeholder="Type Organization Name" class="form-control"
+                               value="<?php echo $contributor['organizationName']; ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+       <?php
+            $iterator++;
+        endforeach;
+    else : ?>
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Contributor
+       </div>
+        <div class="contributor-section panel-body">
+
+            <div class="form-group">
+                <label for="authors" class="control-label col-lg-2 col-sm-2">Author</label>
+                <div class="col-lg-10 col-sm-10">
+                    <input type="text" name="authors[]" id="authors"
+                           placeholder="Type Author" class="form-control"
+                           value="<?php if (isset($resource)) echo $resource->getAuthors(); ?>">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="institution_name" class="control-label col-lg-2 col-sm-2">Organization</label>
+                <div class="col-lg-10 col-sm-10">
+                    <input type="text" name="institution_name[]" id="institution_name"
+                           placeholder="Type Organization Name" class="form-control"
+                           value="<?php if (isset($resource)) echo $resource->getInstitutionName(); ?>">
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    </div>
+
+
+    <div class="form-group">
+        <div class="btn btn-lg btn-info pull-right" onclick="addNewContributor()">
+            <i class="glyphicon glyphicon-plus-sign"></i>
+            Add Another Contributor
+        </div>
+    </div>
+    <br>
+    <div class="clearfix"></div>
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Resource Type
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-lg-12 col-sm-12">
+                    <?php foreach (ResourceHelper::getResourceTypes() as $optionKey => $optionValue): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       id="<?php echo $optionKey; ?>" name="<?php echo $optionKey; ?>"
+                                       value="<?php echo $optionValue; ?>"
+                                       <?php
+                                       if (isset($resource) && ($resource->getType()->isTextInOptions($optionValue)))
+                                           echo "checked='checked'"
+                                           ?> />
+                                <?php echo $optionValue; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Areas of Focus
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-lg-12 col-sm-12">
+                    <?php foreach (ResourceHelper::getAreasOfFocus() as $optionKey => $optionValue): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="<?php echo $optionKey; ?>"
+                                       name="<?php echo $optionKey; ?>" value="<?php echo $optionValue; ?>"
+                               <?php
+                               if (isset($resource) && ($resource->getAreasOfFocus()->isTextInOptions($optionValue)))
+                                   echo "checked='checked'" ?> /><?php echo $optionValue; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Stakeholders
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-lg-12 col-sm-12">
+                    <?php foreach (ResourceHelper::getStakeholders() as $optionKey => $optionValue): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="<?php echo $optionKey; ?>"
+                                       name="<?php echo $optionKey; ?>" value="<?php echo $optionValue; ?>"
+                               <?php
+                               if (isset($resource) && ($resource->getStakeholders()->isTextInOptions($optionValue)))
+                                   echo "checked='checked'" ?> /><?php echo $optionValue; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Resource Formats
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-lg-12 col-sm-12">
+                    <select name="resource_format">
+                    <?php foreach (ResourceHelper::getResourceFormats() as $optionKey => $optionValue): ?>
+                        <option value="<?php echo $optionKey; ?>"
+                            <?php if(isset($resource) && $resource->getResourceFormat() == $optionKey) { echo "selected"; } ?>>
+                            <?php echo $optionValue; ?>
+                        </option>
+                    <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+       </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            Copyright & License Info
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-lg-12 col-sm-12">
+                    <?php foreach (ResourceHelper::getCopyRight() as $optionKey => $optionValue): ?>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="<?php echo $optionKey; ?>"
+                                       name="<?php echo $optionKey; ?>" value="<?php echo $optionValue; ?>"
+                               <?php
+                               if (isset($resource) && ($resource->getCopyright()->isTextInOptions($optionValue)))
+                                   echo "checked='checked'" ?> /><?php echo $optionValue; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            More Fields
+        </div>
+        <div class="panel-body">
+
+            <div class="form-group">
+    			<label class="control-label col-lg-2 col-sm-2">Date</label>
+    			<div class="col-lg-10 col-sm-10" data-date-format="mm-dd-yyyy">
+    				<input type="text"
+    					name="date" id="date"
+    					placeholder="mm-dd-yyyy" class="form-control datepicker"
+    					value="<?php echo $date; ?>" />
+    			</div>
+    		</div>
+
+            <div class="form-group">
+              <label for="url" class="control-label col-lg-2 col-sm-2">URL</label>
+              <div class="col-lg-10 col-sm-10">
+                  <input type="url" name="url" id="url" placeholder="url" class="form-control"
+                    value="<?php if(!empty($resource)) { echo $resource->getUrl(); } ?>">
+              </div>
+            </div>
+
+            <div class="form-group">
+                <label for="video" class="control-label col-lg-2 col-sm-2">Video</label>
+                <div class="col-lg-10 col-sm-10">
+                    <input type="url" name="video" id="video" placeholder="video url" class="form-control"
+                    value="<?php if(!empty($resource)) { echo $resource->getVideo(); } ?>">
+                </div>
+            </div>
+
+            <div class="form-group">
+              <label for="url" class="control-label col-lg-2 col-sm-2">File</label>
+              <div class="col-lg-10 col-sm-10">
+                  <input type="file" name="file" id="file" class="form-control">
+                  <br>
+                  <?php if(isset($resource) && $resource->getFileUrl() != ""): ?>
+                  <div class="pull-right">
+                    <a href="<?php echo $resource->getFileUrl(); ?>">Download - <?php echo $resource->getFileName(); ?></a>
+                  </div>
+                  <?php endif; ?>
+              </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button type="submit" class="btn button-primary btn-lg pull-right">Update</button>
+    <br>
+    <br>
+
+<?php echo PostHelper::addStylesAndScripts();
